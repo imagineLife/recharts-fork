@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   ReferenceLine,
   ReferenceArea,
+  ResponsiveContainer,
   XAxis,
   YAxis,
   Tooltip,
@@ -20,7 +21,8 @@ import {
 } from 'recharts';
 import { scaleOrdinal } from 'victory-vendor/d3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
-import _ from 'lodash';
+import mapValues from 'lodash/mapValues';
+import range from 'lodash/range';
 import { changeNumberOfData } from './utils';
 
 const colors = scaleOrdinal(schemeCategory10).range();
@@ -325,7 +327,7 @@ export default class Demo extends Component<any, any> {
   state = initialState;
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initialState, changeNumberOfData));
+    this.setState(() => mapValues(initialState, changeNumberOfData));
   };
 
   handlePvBarClick = (onClickData: any, index: number) => {
@@ -348,7 +350,7 @@ export default class Demo extends Component<any, any> {
     this.setState({
       data: [
         ...stateData,
-        ..._.range(1 + Math.ceil(data.length * Math.random())).map((entry, index) => {
+        ...range(1 + Math.ceil(data.length * Math.random())).map((entry, index) => {
           console.log(index);
           return {
             name: `random${Math.random()}`.slice(0, 10),
@@ -679,6 +681,34 @@ export default class Demo extends Component<any, any> {
               <LabelList dataKey="noDataLabel" position="top" />
             </Bar>
           </BarChart>
+        </div>
+
+        <p>Animated Bars with matching name values</p>
+        <div className="bar-chart-wrapper">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={[
+                {
+                  name: 'Service 1',
+                  inSLA: 5,
+                  outSLA: 7,
+                },
+                {
+                  name: 'Service 2',
+                  inSLA: 5,
+                  outSLA: 7,
+                },
+              ]}
+              layout="vertical"
+              margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" fill="#eee" />
+              <XAxis type="number" />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} />
+              <Bar dataKey="inSLA" stackId="a" fill="#007700" maxBarSize={10} />
+              <Bar dataKey="outSLA" stackId="a" fill="#cc0000" maxBarSize={10} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     );
